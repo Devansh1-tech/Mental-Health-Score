@@ -39,12 +39,12 @@ function CircularProgress({ score, level }) {
       <svg className="result-ring-svg" viewBox="0 0 200 200">
         <defs>
           <linearGradient id="gradient-excellent" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22C55E" />
-            <stop offset="100%" stopColor="#4ADE80" />
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="100%" stopColor="#34D399" />
           </linearGradient>
           <linearGradient id="gradient-good" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#06B6D4" />
-            <stop offset="100%" stopColor="#3B82F6" />
+            <stop offset="0%" stopColor="#22C55E" />
+            <stop offset="100%" stopColor="#4ADE80" />
           </linearGradient>
           <linearGradient id="gradient-moderate" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#F59E0B" />
@@ -102,7 +102,7 @@ function getScoreData(score) {
       level: 'good',
       label: 'Good Mental Health',
       icon: '😊',
-      emoji: '💙',
+      emoji: '💚',
       description:
         'You show signs of good mental health. Minor adjustments to your daily routine could help you achieve an even better balance.',
       recommendations: [

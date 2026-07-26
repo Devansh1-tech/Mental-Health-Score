@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 const TESTIMONIALS = [
   {
-    name: 'Sarah K.',
-    role: 'Graduate Student',
+    name: 'Ananya Shakya',
+    role: 'Clinical Psychologist Expert',
     avatar: 'S',
     text: 'MindAI helped me realize how much my social media habits were affecting my mental health. The recommendations were spot-on and easy to follow.',
     stars: 5,
