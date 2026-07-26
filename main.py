@@ -4,8 +4,26 @@ from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from typing import Literal
 from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
+import os
 
-model = joblib.load('Mental Health Model.pkl')
+BASE_DIR = Path(__file__).resolve().parent
+
+print("=" * 60)
+print("Current Working Directory:", os.getcwd())
+print("Base Directory:", BASE_DIR)
+print("Files in Base Directory:")
+for f in BASE_DIR.iterdir():
+    print(" -", f.name)
+print("=" * 60)
+
+MODEL_PATH = BASE_DIR / "Mental Health model.pkl"
+
+print("Model Path:", MODEL_PATH)
+print("Model Exists:", MODEL_PATH.exists())
+
+model = joblib.load(MODEL_PATH)
+
 top_countries = ['Other','India','USA','Canada','Australia','UK','Germany','Mexico','Turkey','France']
 
 app = FastAPI()
