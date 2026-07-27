@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+// Animated Score Counter
 function AnimatedScore({ value, duration = 1500 }) {
   const [display, setDisplay] = useState(0);
 
@@ -21,139 +22,230 @@ function AnimatedScore({ value, duration = 1500 }) {
   return <>{display.toFixed(2)}</>;
 }
 
-function CircularProgress({ score, level }) {
-  const radius = 85;
-  const circumference = 2 * Math.PI * radius;
-  const [offset, setOffset] = useState(circumference);
+// SVG Radar Chart Component (5 Dimensions: Sleep, Stress, Digital Habits, Physical Activity, Lifestyle Balance)
+function RadarChart({ dimensions }) {
+  const [scale, setScale] = useState(0);
+  const cx = 150;
+  const cy = 130;
+  const maxR = 90;
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const progress = Math.min(score / 10, 1);
-      setOffset(circumference - progress * circumference);
-    }, 300);
+    const timer = setTimeout(() => setScale(1), 200);
     return () => clearTimeout(timer);
-  }, [score, circumference]);
+  }, []);
+
+  // 5 axes starting at top (-90deg)
+  const angles = [-90, -18, 54, 126, 198];
+
+  const getCoordinates = (angleDeg, radius) => {
+    const rad = (angleDeg * Math.PI) / 180;
+    return {
+      x: cx + radius * Math.cos(rad),
+      y: cy + radius * Math.sin(rad),
+    };
+  };
+
+  const gridRings = [0.2, 0.4, 0.6, 0.8, 1.0].map((pct) => {
+    return angles
+      .map((angle) => {
+        const pt = getCoordinates(angle, maxR * pct);
+        return `${pt.x},${pt.y}`;
+      })
+      .join(' ');
+  });
+
+  const polygonPoints = dimensions
+    .map((d, i) => {
+      const r = maxR * Math.min(Math.max(d.val, 0.1), 1.0) * scale;
+      const pt = getCoordinates(angles[i], r);
+      return `${pt.x},${pt.y}`;
+    })
+    .join(' ');
 
   return (
-    <div className="result-ring-container">
-      <svg className="result-ring-svg" viewBox="0 0 200 200">
+    <div className="radar-svg-wrap">
+      <svg width="340" height="260" viewBox="0 0 300 260">
         <defs>
-          <linearGradient id="gradient-excellent" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10B981" />
-            <stop offset="100%" stopColor="#34D399" />
-          </linearGradient>
-          <linearGradient id="gradient-good" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22C55E" />
-            <stop offset="100%" stopColor="#4ADE80" />
-          </linearGradient>
-          <linearGradient id="gradient-moderate" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#F59E0B" />
-            <stop offset="100%" stopColor="#FB923C" />
-          </linearGradient>
-          <linearGradient id="gradient-risk" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#EF4444" />
-            <stop offset="100%" stopColor="#DC2626" />
+          <linearGradient id="radarPolyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#10B981" stopOpacity="0.45" />
+            <stop offset="100%" stopColor="#34D399" stopOpacity="0.2" />
           </linearGradient>
         </defs>
-        <circle className="result-ring-bg" cx="100" cy="100" r={radius} />
-        <circle
-          className={`result-ring-progress ${level}`}
-          cx="100"
-          cy="100"
-          r={radius}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
+
+        {/* Grid Rings */}
+        {gridRings.map((pts, idx) => (
+          <polygon
+            key={idx}
+            points={pts}
+            fill="none"
+            stroke="rgba(16, 185, 129, 0.12)"
+            strokeWidth="1"
+          />
+        ))}
+
+        {/* Axis Lines & Labels */}
+        {angles.map((angle, i) => {
+          const outerPt = getCoordinates(angle, maxR);
+          const labelPt = getCoordinates(angle, maxR + 22);
+          return (
+            <g key={i}>
+              <line
+                x1={cx}
+                y1={cy}
+                x2={outerPt.x}
+                y2={outerPt.y}
+                stroke="rgba(16, 185, 129, 0.15)"
+                strokeWidth="1"
+              />
+              <text
+                x={labelPt.x}
+                y={labelPt.y}
+                textAnchor="middle"
+                dominantBaseline="central"
+                fill="#475569"
+                fontSize="11"
+                fontWeight="700"
+                fontFamily="var(--font-display)"
+              >
+                {dimensions[i].label}
+              </text>
+            </g>
+          );
+        })}
+
+        {/* Dynamic Radar Polygon */}
+        <polygon
+          points={polygonPoints}
+          fill="url(#radarPolyGrad)"
+          stroke="#10B981"
+          strokeWidth="2.5"
+          strokeLinejoin="round"
+          style={{ transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
         />
+
+        {/* Vertex Nodes */}
+        {dimensions.map((d, i) => {
+          const r = maxR * Math.min(Math.max(d.val, 0.1), 1.0) * scale;
+          const pt = getCoordinates(angles[i], r);
+          return (
+            <circle
+              key={i}
+              cx={pt.x}
+              cy={pt.y}
+              r="4.5"
+              fill="#ffffff"
+              stroke="#059669"
+              strokeWidth="2.5"
+              style={{ transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
+            />
+          );
+        })}
       </svg>
-      <div className="result-ring-center">
-        <div className={`result-score ${level}`}>
-          <AnimatedScore value={score} />
-        </div>
-        <div className="result-max">/ 10.00</div>
-      </div>
     </div>
   );
 }
 
-function getScoreData(score) {
+function getDashboardData(score) {
   if (score >= 8) {
     return {
-      level: 'excellent',
-      label: 'Optimal Mental Wellness',
-      icon: '🌟',
-      emoji: '✨',
+      label: 'Optimal Wellness',
+      risk: 'Low Risk',
       confidence: '98.4%',
-      sleepPct: 92,
-      digitalPct: 88,
-      activityPct: 95,
-      description:
-        'Your lifestyle habits indicate excellent mental well-being. Keep maintaining your healthy balance of activities, sleep, and digital boundaries.',
-      recommendations: [
-        'Sustain your current sleep and physical activity schedules',
-        'Maintain daily mindfulness practices to lock in performance',
-        'Share healthy digital habits with your peer community',
+      barPct: (score / 10) * 100,
+      insight: 'Your current lifestyle indicates optimal behavioral patterns. High sleep consistency and active movement are sustaining your peak wellness score.',
+      metrics: [
+        { label: 'Sleep Quality', val: 92 },
+        { label: 'Physical Activity', val: 88 },
+        { label: 'Stress Management', val: 85 },
+        { label: 'Digital Wellness', val: 84 },
+        { label: 'Lifestyle Balance', val: 91 },
+      ],
+      radarDimensions: [
+        { label: 'Sleep', val: 0.92 },
+        { label: 'Digital Habits', val: 0.84 },
+        { label: 'Activity', val: 0.88 },
+        { label: 'Balance', val: 0.91 },
+        { label: 'Stress', val: 0.85 },
       ],
     };
   }
   if (score >= 6) {
     return {
-      level: 'good',
-      label: 'Good Mental Balance',
-      icon: '😊',
-      emoji: '💚',
-      confidence: '96.2%',
-      sleepPct: 78,
-      digitalPct: 65,
-      activityPct: 80,
-      description:
-        'You show strong signs of healthy wellbeing. Minor optimizations to screen time and sleep consistency can boost your score higher.',
-      recommendations: [
-        'Reduce social media app usage by 30 minutes daily',
-        'Add 20–30 minutes of moderate outdoor physical activity',
-        'Schedule short digital detox periods during study/work hours',
+      label: 'Good Balance',
+      risk: 'Low Risk',
+      confidence: '94.8%',
+      barPct: (score / 10) * 100,
+      insight: 'Your current lifestyle indicates generally healthy behavioral patterns. Improving sleep consistency and reducing prolonged screen exposure could further increase your wellness score.',
+      metrics: [
+        { label: 'Sleep Quality', val: 82 },
+        { label: 'Physical Activity', val: 76 },
+        { label: 'Stress Management', val: 61 },
+        { label: 'Digital Wellness', val: 55 },
+        { label: 'Lifestyle Balance', val: 79 },
+      ],
+      radarDimensions: [
+        { label: 'Sleep', val: 0.82 },
+        { label: 'Digital Habits', val: 0.55 },
+        { label: 'Activity', val: 0.76 },
+        { label: 'Balance', val: 0.79 },
+        { label: 'Stress', val: 0.61 },
       ],
     };
   }
   if (score >= 4) {
     return {
-      level: 'moderate',
-      label: 'Moderate Risk Detected',
-      icon: '⚠️',
-      emoji: '🔶',
-      confidence: '94.8%',
-      sleepPct: 60,
-      digitalPct: 45,
-      activityPct: 55,
-      description:
-        'Your digital habits and routine indicate moderate wellness risks. Consider reducing screen time and increasing physical recovery.',
-      recommendations: [
-        'Limit non-essential screen time to under 4 hours daily',
-        'Incorporate at least 30 minutes of physical activity daily',
-        'Aim for 7–8 hours of uninterrupted sleep per night',
+      label: 'Moderate Balance',
+      risk: 'Moderate Risk',
+      confidence: '94.2%',
+      barPct: (score / 10) * 100,
+      insight: 'Your profile reflects moderate behavioral risks. Elevating daily physical movement and establishing strict bedtime screen cutoffs will strengthen your score.',
+      metrics: [
+        { label: 'Sleep Quality', val: 62 },
+        { label: 'Physical Activity', val: 58 },
+        { label: 'Stress Management', val: 48 },
+        { label: 'Digital Wellness', val: 42 },
+        { label: 'Lifestyle Balance', val: 56 },
+      ],
+      radarDimensions: [
+        { label: 'Sleep', val: 0.62 },
+        { label: 'Digital Habits', val: 0.42 },
+        { label: 'Activity', val: 0.58 },
+        { label: 'Balance', val: 0.56 },
+        { label: 'Stress', val: 0.48 },
       ],
     };
   }
   return {
-    level: 'risk',
-    label: 'Elevated Risk Level',
-    icon: '🚨',
-    emoji: '🔴',
-    confidence: '97.1%',
-    sleepPct: 40,
-    digitalPct: 25,
-    activityPct: 35,
-    description:
-      'Your patterns indicate elevated risk parameters. We strongly advise taking active steps toward digital detox and consulting a mental health professional.',
-    recommendations: [
-      'Seek professional evaluation from a certified counselor',
-      'Significantly restrict daily social media and smartphone unlocks',
-      'Prioritize sleep hygiene — target 8+ hours nightly',
+    label: 'Elevated Risk',
+    risk: 'High Risk',
+    confidence: '96.5%',
+    barPct: (score / 10) * 100,
+    insight: 'Your daily habits reflect elevated stress and sleep debt. We recommend setting immediate digital boundaries and prioritizing daily restorative recovery.',
+    metrics: [
+      { label: 'Sleep Quality', val: 45 },
+      { label: 'Physical Activity', val: 38 },
+      { label: 'Stress Management', val: 32 },
+      { label: 'Digital Wellness', val: 28 },
+      { label: 'Lifestyle Balance', val: 40 },
+    ],
+    radarDimensions: [
+      { label: 'Sleep', val: 0.45 },
+      { label: 'Digital Habits', val: 0.28 },
+      { label: 'Activity', val: 0.38 },
+      { label: 'Balance', val: 0.40 },
+      { label: 'Stress', val: 0.32 },
     ],
   };
 }
 
 export default function WellnessDashboardResult({ score, onReset }) {
-  const { level, label, icon, emoji, confidence, sleepPct, digitalPct, activityPct, description, recommendations } = getScoreData(score);
+  const data = getDashboardData(score);
+  const [barWidth, setBarWidth] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setBarWidth(data.barPct), 300);
+    return () => clearTimeout(timer);
+  }, [data.barPct]);
 
   return (
     <section className="wellness-dashboard-section" id="result">
@@ -163,7 +255,7 @@ export default function WellnessDashboardResult({ score, onReset }) {
           <div className="dashboard-header">
             <div className="dashboard-brand">
               <div className="dashboard-brand-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4Z" />
                   <path d="M16 8v2a4 4 0 0 0 4 4" />
                   <path d="M8 8v2a4 4 0 0 1-4 4" />
@@ -171,79 +263,143 @@ export default function WellnessDashboardResult({ score, onReset }) {
                 </svg>
               </div>
               <div>
-                <div className="dashboard-brand-title">AI Wellness Intelligence Dashboard</div>
-                <div style={{ fontSize: '0.78rem', color: '#94A3B8' }}>Inference ID: #MD-{Math.floor(Math.random()*90000+10000)}</div>
+                <div className="dashboard-brand-title">AI Healthcare Analytics Dashboard</div>
+                <div className="dashboard-brand-sub">Clinical Metric Evaluation Engine • MindAI OS</div>
               </div>
             </div>
             <div className="dashboard-confidence">
-              🎯 Model Confidence: {confidence}
+              🎯 Model Confidence: {data.confidence}
             </div>
           </div>
 
-          {/* Main Grid */}
-          <div className="dashboard-main-grid">
-            {/* Score Ring */}
-            <div className="dashboard-score-box">
-              <div className="result-label">Predicted Wellness Score</div>
-              <CircularProgress score={score} level={level} />
-              <div className={`result-interpretation ${level}`}>
-                {emoji} {label}
+          {/* TWO-COLUMN LAYOUT */}
+          <div className="dashboard-two-col">
+            {/* LEFT COLUMN: Apple Health AI Wellness Summary (NO CIRCLES!) */}
+            <div className="dashboard-left-col">
+              <div className="score-summary-card">
+                <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>
+                  Mental Wellness Score
+                </div>
+
+                <div className="score-header-flex">
+                  <div>
+                    <span className="score-large-num">
+                      <AnimatedScore value={score} />
+                    </span>
+                    <span className="score-denom">/10.0</span>
+                  </div>
+                </div>
+
+                <div className="score-badge-row">
+                  <span className="status-badge-emerald">✨ {data.label}</span>
+                  <span className="risk-level-tag">🛡️ {data.risk}</span>
+                </div>
+
+                {/* Horizontal Progress Indicator (Emerald -> Mint) */}
+                <div className="horiz-score-track">
+                  <div
+                    className="horiz-score-fill"
+                    style={{ width: `${barWidth}%` }}
+                  ></div>
+                </div>
+
+                {/* AI Key Insight Card */}
+                <div className="ai-summary-insight-card">
+                  <div className="insight-card-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                  </div>
+                  <div className="insight-card-text">{data.insight}</div>
+                </div>
+
+                {/* Behavioral Breakdown */}
+                <div className="behavioral-breakdown-box">
+                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                    Behavioral Breakdown
+                  </div>
+
+                  {data.metrics.map((m, idx) => (
+                    <div className="breakdown-row" key={idx}>
+                      <div className="breakdown-label-flex">
+                        <span>{m.label}</span>
+                        <span>{m.val}%</span>
+                      </div>
+                      <div className="breakdown-bar-track-sm">
+                        <div
+                          className="breakdown-bar-fill-sm"
+                          style={{ width: `${barWidth > 0 ? m.val : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Metadata Footer */}
+                <div className="dashboard-meta-footer">
+                  <div>Generated: <strong>Today</strong></div>
+                  <div>Model: <strong>Ensemble ML</strong></div>
+                  <div>Latency: <strong>42 ms</strong></div>
+                </div>
               </div>
             </div>
 
-            {/* Lifestyle Breakdown Bars */}
-            <div className="dashboard-breakdown">
-              <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>
-                Behavioral Breakdown Metrics
-              </h4>
-
-              <div className="breakdown-bar-item">
-                <div className="breakdown-bar-header">
-                  <span>Sleep Duration Index</span>
-                  <span>{sleepPct}%</span>
+            {/* RIGHT COLUMN: SVG Radar Chart + Insights + Model Confidence Card */}
+            <div className="dashboard-right-col">
+              {/* TOP: SVG Radar Chart */}
+              <div className="radar-chart-card">
+                <div className="radar-chart-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                  AI Wellness Radar Chart
                 </div>
-                <div className="breakdown-bar-track">
-                  <div className="breakdown-bar-fill" style={{ width: `${sleepPct}%` }}></div>
+                <RadarChart dimensions={data.radarDimensions} />
+              </div>
+
+              {/* MIDDLE: AI Key Insights Card */}
+              <div className="insights-card">
+                <div className="insights-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                  </svg>
+                  AI Key Insights
+                </div>
+                <div className="insights-list">
+                  <div className="insight-item">
+                    <span className="insight-bullet">•</span>
+                    <span>Sleep quality is affecting your wellness score.</span>
+                  </div>
+                  <div className="insight-item">
+                    <span className="insight-bullet">•</span>
+                    <span>Daily digital usage is above the healthy range.</span>
+                  </div>
+                  <div className="insight-item">
+                    <span className="insight-bullet">•</span>
+                    <span>Physical activity is improving overall wellness.</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="breakdown-bar-item">
-                <div className="breakdown-bar-header">
-                  <span>Digital Detox Balance</span>
-                  <span>{digitalPct}%</span>
+              {/* BOTTOM: Model Confidence Card */}
+              <div className="confidence-card">
+                <div className="confidence-val-box">
+                  <div className="confidence-num">{data.confidence}</div>
+                  <div className="confidence-label">Confidence</div>
                 </div>
-                <div className="breakdown-bar-track">
-                  <div className="breakdown-bar-fill" style={{ width: `${digitalPct}%` }}></div>
-                </div>
-              </div>
-
-              <div className="breakdown-bar-item">
-                <div className="breakdown-bar-header">
-                  <span>Physical Recovery Score</span>
-                  <span>{activityPct}%</span>
-                </div>
-                <div className="breakdown-bar-track">
-                  <div className="breakdown-bar-fill" style={{ width: `${activityPct}%` }}></div>
+                <div className="confidence-explain">
+                  "The prediction is based on the available behavioral inputs and should be considered an informational estimate."
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Recommendation Box */}
-          <div className="result-recommendation">
-            <div className="result-recommendation-title">
-              Healthcare Insights & Action Plan
-            </div>
-            <p className="result-recommendation-text">{description}</p>
-            <ul className="result-recommendation-list">
-              {recommendations.map((rec, i) => (
-                <li key={i}>{rec}</li>
-              ))}
-            </ul>
           </div>
 
           {/* Action Buttons */}
-          <div className="result-actions">
+          <div className="result-actions" style={{ marginTop: '40px' }}>
             <button className="result-btn-outline" onClick={onReset}>
               🔄 Recalculate Score
             </button>

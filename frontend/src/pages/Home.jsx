@@ -9,6 +9,9 @@ import ModelPerformance from '../components/ModelPerformance';
 import PredictionForm from '../components/PredictionForm';
 import CommandCenterLoader from '../components/CommandCenterLoader';
 import WellnessDashboardResult from '../components/WellnessDashboardResult';
+import PersonalizedRecommendations from '../components/PersonalizedRecommendations';
+import TestimonialSection from '../components/TestimonialSection';
+import ProfessionalPerspectiveSection from '../components/ProfessionalPerspectiveSection';
 import FAQ from '../components/FAQ';
 import Footer from '../components/Footer';
 
@@ -56,7 +59,10 @@ export default function Home() {
       {loading && <CommandCenterLoader />}
 
       {!loading && score !== null && (
-        <WellnessDashboardResult score={score} onReset={handleReset} />
+        <>
+          <WellnessDashboardResult score={score} onReset={handleReset} />
+          <PersonalizedRecommendations />
+        </>
       )}
 
       {!loading && error && (
@@ -76,6 +82,8 @@ export default function Home() {
         </section>
       )}
 
+      <TestimonialSection />
+      <ProfessionalPerspectiveSection />
       <FAQ />
       <Footer />
     </>
