@@ -4,32 +4,32 @@ const FAQ_DATA = [
   {
     question: 'How accurate is the MindAI prediction?',
     answer:
-      'MindAI uses an ensemble machine learning model trained on real student behavioral data. While no model is 100% accurate, our predictions provide a strong indication of mental wellness trends based on your lifestyle inputs. Always consult a professional for clinical assessments.',
+      'MindAI uses an ensemble machine learning model trained on empirical student behavioral datasets. Achieving 95% cross-validated accuracy, our model provides a highly reliable indication of mental wellness trends based on lifestyle signals. Note that it is designed for awareness, not clinical diagnosis.',
   },
   {
-    question: 'Is my data stored or shared?',
+    question: 'Is my personal data stored or shared?',
     answer:
-      'No. Your data is processed entirely in real-time and never stored on our servers. We do not track, log, or share any personal information. Your privacy is our top priority.',
+      'No. MindAI is engineered with privacy as a foundational principle. Your input parameters are processed ephemerally in real time and are never stored in any database or shared with third parties.',
   },
   {
-    question: 'What does the score mean?',
+    question: 'What does the score range mean?',
     answer:
-      'The score ranges from 0 to 10. Scores of 8+ indicate excellent mental health, 6-7.9 suggest good health with minor improvements possible, 4-5.9 indicate moderate risk, and below 4 signals high risk. Each result includes personalized recommendations.',
+      'Scores range from 0.00 to 10.00. Scores of 8.0+ indicate optimal mental wellness, 6.0–7.9 signal good balance with minor optimization areas, 4.0–5.9 suggest moderate risk factors, and scores below 4.0 highlight elevated risk patterns.',
   },
   {
-    question: 'Can this replace professional mental health advice?',
+    question: 'Can MindAI replace a professional therapist?',
     answer:
-      'Absolutely not. MindAI is a predictive tool designed for awareness and education. It should not replace professional mental health evaluation or treatment. If you are experiencing mental health difficulties, please reach out to a qualified professional.',
+      'No. MindAI is an intelligent predictive tool aimed at preventive awareness and daily habit tracking. If you are experiencing distress, we encourage consulting a certified healthcare professional.',
   },
   {
-    question: 'What features does the model use?',
+    question: 'What input parameters are evaluated?',
     answer:
-      'The model analyzes 12+ features including age, gender, country, academic level, most-used social media platform, purpose of use, daily usage hours, phone unlocks, study hours, physical activity, sleep hours, and stress level.',
+      'Our model evaluates 12+ signals including age, academic level, primary social platform, daily screen time, phone unlocks, study hours, physical activity, sleep duration, and self-reported stress levels.',
   },
   {
-    question: 'What technology stack powers MindAI?',
+    question: 'What architecture powers MindAI?',
     answer:
-      'MindAI is built with React.js for the frontend, FastAPI (Python) for the backend API, and Scikit-Learn for the machine learning model. The model is serialized with Joblib for fast inference.',
+      'MindAI features a Vite + React frontend styled with custom glassmorphism design tokens, backed by a FastAPI microservice and Scikit-Learn ensemble model serialized via Joblib for sub-second inference.',
   },
 ];
 
@@ -44,10 +44,17 @@ export default function FAQ() {
     <section className="faq-section" id="faq">
       <div className="container">
         <div className="section-header">
-          <div className="section-tag">❓ FAQ</div>
+          <div className="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            FAQ
+          </div>
           <h2 className="section-title">Frequently Asked Questions</h2>
           <p className="section-subtitle">
-            Everything you need to know about MindAI and how it works.
+            Everything you need to know about MindAI technology, privacy, and clinical metrics.
           </p>
         </div>
 

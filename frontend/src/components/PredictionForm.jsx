@@ -159,7 +159,7 @@ export default function PredictionForm({ onResult, onError, loading, setLoading 
     setLoading(true);
 
     try {
-      const response = await fetch("https://mental-health-score-5v35.onrender.com/predict",{
+      const response = await fetch("https://mental-health-score-5v35.onrender.com/predict", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -227,69 +227,106 @@ export default function PredictionForm({ onResult, onError, loading, setLoading 
   return (
     <section className="prediction-section" id="prediction">
       <div className="container">
-        <div className="section-header fade-in">
-          <div className="section-tag">🔬 Prediction Engine</div>
-          <h2 className="section-title">Analyze Your Wellness</h2>
-          <p className="section-subtitle">
-            Fill in the form below and let our AI predict your mental health score
-            based on your daily habits and lifestyle patterns.
-          </p>
-        </div>
+        <div className="prediction-container">
+          <div className="prediction-layout">
+            {/* Left Column: Info & Decorative Illustration */}
+            <div className="prediction-info">
+              <div className="prediction-info-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Prediction Engine
+              </div>
+              <h2>Analyze Your Mental Wellness</h2>
+              <p>
+                Complete our behavioral assessment form to calculate your AI mental wellness score with instant precision.
+              </p>
 
-        <form
-          className="prediction-form-card glass-card fade-in"
-          onSubmit={handleSubmit}
-          noValidate
-        >
-          <div className="form-grid">
-            {/* Personal Information */}
-            <div className="form-section-title">👤 Personal Information</div>
+              <div className="prediction-deco">
+                <div className="prediction-deco-item">
+                  <div className="prediction-deco-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                  </div>
+                  <div className="prediction-deco-text">100% Private & Anonymous Session</div>
+                </div>
 
-            {renderField('age', 'Age', 'number', null, 'e.g. 21')}
-            {renderField('gender', 'Gender', 'text', GENDERS)}
-            {renderField('country', 'Country', 'text', null, 'e.g. United States')}
-            {renderField('academic_level', 'Academic Level', 'text', ACADEMIC_LEVELS)}
+                <div className="prediction-deco-item">
+                  <div className="prediction-deco-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                  </div>
+                  <div className="prediction-deco-text">Instant Sub-second Model Inference</div>
+                </div>
 
-            <div className="form-divider"></div>
+                <div className="prediction-deco-item">
+                  <div className="prediction-deco-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
+                  </div>
+                  <div className="prediction-deco-text">Tailored Healthcare Recommendations</div>
+                </div>
+              </div>
+            </div>
 
-            {/* Digital Habits */}
-            <div className="form-section-title">📱 Digital Habits</div>
+            {/* Right Column: Prediction Form */}
+            <div className="prediction-form-panel">
+              <form onSubmit={handleSubmit} noValidate>
+                <div className="form-grid">
+                  {/* Personal Information */}
+                  <div className="form-section-title">👤 Personal Profile</div>
+                  {renderField('age', 'Age', 'number', null, 'e.g. 21')}
+                  {renderField('gender', 'Gender', 'text', GENDERS)}
+                  {renderField('country', 'Country', 'text', null, 'e.g. United States')}
+                  {renderField('academic_level', 'Academic Level', 'text', ACADEMIC_LEVELS)}
 
-            {renderField('most_used_platform', 'Most Used Platform', 'text', PLATFORMS)}
-            {renderField('purpose_of_use', 'Purpose of Use', 'text', PURPOSES)}
-            {renderField('avg_daily_usage_hours', 'Avg. Daily Usage (Hours)', 'number', null, 'e.g. 4')}
-            {renderField('daily_unlocks', 'Daily Unlocks', 'number', null, 'e.g. 50')}
+                  <div className="form-divider"></div>
 
-            <div className="form-divider"></div>
+                  {/* Digital Habits */}
+                  <div className="form-section-title">📱 Digital Habits</div>
+                  {renderField('most_used_platform', 'Primary Social Platform', 'text', PLATFORMS)}
+                  {renderField('purpose_of_use', 'Primary Purpose', 'text', PURPOSES)}
+                  {renderField('avg_daily_usage_hours', 'Daily Usage (Hours)', 'number', null, 'e.g. 4')}
+                  {renderField('daily_unlocks', 'Daily Unlocks', 'number', null, 'e.g. 50')}
 
-            {/* Lifestyle */}
-            <div className="form-section-title">🏃 Lifestyle & Wellbeing</div>
+                  <div className="form-divider"></div>
 
-            {renderField('study_hours', 'Study Hours', 'number', null, 'e.g. 5')}
-            {renderField('physical_activity_hours', 'Physical Activity (Hours)', 'number', null, 'e.g. 1.5')}
-            {renderField('sleep_hours_per_night', 'Sleep Hours / Night', 'number', null, 'e.g. 7')}
-            {renderField('stress_level', 'Stress Level', 'text', STRESS_LEVELS)}
+                  {/* Lifestyle */}
+                  <div className="form-section-title">🏃 Lifestyle & Wellbeing</div>
+                  {renderField('study_hours', 'Study Hours / Day', 'number', null, 'e.g. 5')}
+                  {renderField('physical_activity_hours', 'Physical Activity (Hours)', 'number', null, 'e.g. 1.5')}
+                  {renderField('sleep_hours_per_night', 'Sleep Hours / Night', 'number', null, 'e.g. 7')}
+                  {renderField('stress_level', 'Current Stress Level', 'text', STRESS_LEVELS)}
 
-            {/* Submit */}
-            <div className="form-actions">
-              <button
-                type="submit"
-                className="btn-primary predict-btn"
-                disabled={loading}
-                onClick={handleRipple}
-              >
-                {loading ? (
-                  <>
-                    <span className="spinner"></span>
-                    Analyzing...
-                  </>
-                ) : (
-                  <>🚀 Predict Mental Health Score <span className="btn-arrow">→</span></>
-                )}
-              </button>
+                  {/* Submit Action */}
+                  <div className="form-actions">
+                    <button
+                      type="submit"
+                      className="btn-primary predict-btn"
+                      disabled={loading}
+                      onClick={handleRipple}
+                    >
+                      {loading ? (
+                        <>
+                          <span className="spinner"></span>
+                          Processing...
+                        </>
+                      ) : (
+                        <>Start Prediction <span className="btn-arrow">→</span></>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </form>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </section>
   );

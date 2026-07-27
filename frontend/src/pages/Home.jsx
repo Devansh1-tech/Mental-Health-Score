@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
-import HowItWorks from '../components/HowItWorks';
-import Features from '../components/Features';
-import Stats from '../components/Stats';
+import PipelineSection from '../components/PipelineSection';
+import AIEngineSection from '../components/AIEngineSection';
+import BentoSection from '../components/BentoSection';
+import LiveDemoSection from '../components/LiveDemoSection';
+import ModelPerformance from '../components/ModelPerformance';
 import PredictionForm from '../components/PredictionForm';
-import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
-import AboutModel from '../components/AboutModel';
-import Testimonials from '../components/Testimonials';
+import CommandCenterLoader from '../components/CommandCenterLoader';
+import WellnessDashboardResult from '../components/WellnessDashboardResult';
 import FAQ from '../components/FAQ';
-import Developer from '../components/Developer';
 import Footer from '../components/Footer';
 
 export default function Home() {
@@ -41,9 +40,11 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <HowItWorks />
-      <Features />
-      <Stats />
+      <PipelineSection />
+      <AIEngineSection />
+      <BentoSection />
+      <LiveDemoSection />
+      <ModelPerformance />
 
       <PredictionForm
         onResult={handleResult}
@@ -52,16 +53,16 @@ export default function Home() {
         setLoading={setLoading}
       />
 
-      {loading && <Loader />}
+      {loading && <CommandCenterLoader />}
 
       {!loading && score !== null && (
-        <ResultCard score={score} onReset={handleReset} />
+        <WellnessDashboardResult score={score} onReset={handleReset} />
       )}
 
       {!loading && error && (
         <section className="result-section">
           <div className="container">
-            <div className="error-card glass-card">
+            <div className="error-card">
               <div className="error-icon">❌</div>
               <h3 className="error-title">Prediction Failed</h3>
               <p className="error-message">
@@ -75,10 +76,7 @@ export default function Home() {
         </section>
       )}
 
-      <AboutModel />
-      <Testimonials />
       <FAQ />
-      <Developer />
       <Footer />
     </>
   );

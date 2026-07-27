@@ -15,14 +15,13 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
             setValue(target);
             return;
           }
-          const start = 0;
           const startTime = performance.now();
 
           const step = (currentTime) => {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.round(start + (end - start) * eased);
+            const current = Math.round(end * eased);
             setValue(current);
             if (progress < 1) requestAnimationFrame(step);
           };
@@ -47,6 +46,24 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }) {
 }
 
 export default function Hero() {
+  const heroRef = useRef(null);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
+
+  const handleMouseMove = (e) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    // Subtle 3D tilt calculations
+    const rotateX = -(y / rect.height) * 15;
+    const rotateY = (x / rect.width) * 15;
+    setTilt({ rotateX, rotateY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotateX: 0, rotateY: 0 });
+  };
+
   const handleRipple = (e) => {
     const btn = e.currentTarget;
     const ripple = document.createElement('span');
@@ -61,25 +78,43 @@ export default function Hero() {
   };
 
   return (
-    <section className="hero" id="hero">
+    <section
+      className="hero"
+      id="hero"
+      ref={heroRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Ambient background mesh & blobs */}
+      <div className="hero-blobs">
+        <div className="hero-blob hero-blob--1"></div>
+        <div className="hero-blob hero-blob--2"></div>
+        <div className="hero-blob hero-blob--3"></div>
+      </div>
+
+      {/* Floating neural particles */}
+      <div className="hero-particles">
+        {Array.from({ length: 10 }).map((_, i) => (
+          <span className="hero-particle" key={i}></span>
+        ))}
+      </div>
+
       <div className="container">
         <div className="hero-content">
           <div className="hero-text">
             <div className="hero-badge">
               <span className="hero-badge-dot"></span>
-              AI-Powered Prediction Engine
+              Clinical-Grade Neural Intelligence
             </div>
 
             <h1 className="hero-title">
-              <span className="gradient-text">AI-Driven Mental</span>
+              <span className="gradient-text">AI-Driven Mental Health</span>
               <br />
-              Health Analytics
+              Intelligence
             </h1>
 
             <p className="hero-description">
-              Harness the power of Machine Learning to predict your mental wellness score.
-              Understand how your digital habits, lifestyle, and daily routines shape
-              your well-being — in seconds.
+              Understand your digital behaviour, lifestyle and wellness through intelligent AI analysis.
             </p>
 
             <div className="hero-actions">
@@ -88,10 +123,10 @@ export default function Hero() {
                 className="btn-primary"
                 onClick={handleRipple}
               >
-                ✨ Start Prediction <span className="btn-arrow">→</span>
+                Start Assessment <span className="btn-arrow">→</span>
               </a>
-              <a href="#how-it-works" className="hero-btn-secondary">
-                How It Works
+              <a href="#demo" className="hero-btn-secondary">
+                Watch AI Demo
               </a>
             </div>
 
@@ -100,41 +135,47 @@ export default function Hero() {
                 <div className="hero-stat-number">
                   <AnimatedCounter target={12} suffix="+" />
                 </div>
-                <div className="hero-stat-label">Input Features</div>
+                <div className="hero-stat-label">Neural Signals</div>
               </div>
               <div className="hero-stat">
                 <div className="hero-stat-number">
                   <AnimatedCounter target={95} suffix="%" />
                 </div>
-                <div className="hero-stat-label">Accuracy Rate</div>
+                <div className="hero-stat-label">Model Precision</div>
               </div>
               <div className="hero-stat">
                 <div className="hero-stat-number">
-                  <AnimatedCounter target={0} suffix="" />
-                  <span style={{ fontSize: '1.85rem' }}>ms</span>
+                  Instant
                 </div>
-                <div className="hero-stat-label">Instant Results</div>
+                <div className="hero-stat-label">Inference Engine</div>
               </div>
             </div>
           </div>
 
           <div className="hero-illustration">
-            <div className="hero-visual">
-              {/* Animated rings */}
-              <div className="hero-visual-ring"></div>
-              <div className="hero-visual-ring"></div>
-              <div className="hero-visual-ring"></div>
+            <div
+              className="hero-video-container"
+              style={{
+                transform: `rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg)`,
+              }}
+            >
+              {/* Soft emerald radial glow behind brain */}
+              <div className="hero-video-glow"></div>
 
-              {/* Core orb */}
-              <div className="hero-visual-core">
-                <div className="hero-visual-brain">🧠</div>
-                <div className="hero-visual-label">MIND AI</div>
-              </div>
+              {/* Free Floating AI Brain Video */}
+              <video
+                className="hero-video"
+                autoPlay
+                loop
+                muted
+                playsInline
+                disablePictureInPicture
+              >
+                <source src="/assets/ai-brain.mp4" type="video/mp4" />
+              </video>
 
-              {/* Orbiting dots */}
-              <div className="hero-visual-dot"></div>
-              <div className="hero-visual-dot"></div>
-              <div className="hero-visual-dot"></div>
+              {/* Floor ambient blur reflection */}
+              <div className="hero-video-blur"></div>
             </div>
           </div>
         </div>

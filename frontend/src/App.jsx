@@ -23,8 +23,6 @@ export default function App() {
         <div className="particle"></div>
         <div className="particle"></div>
         <div className="particle"></div>
-        <div className="particle"></div>
-        <div className="particle"></div>
       </div>
 
       {/* Main app */}

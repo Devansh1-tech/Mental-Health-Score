@@ -2,24 +2,24 @@ import { useEffect, useRef, useState } from 'react';
 
 const STEPS = [
   {
-    icon: '📝',
+    image: '/assets/step-clipboard.png',
     title: 'Enter Your Data',
-    desc: 'Fill in details about your lifestyle, digital habits, and daily routines.',
+    desc: 'Fill in your daily habits, study routines, digital screen time, and wellbeing details in our simple form.',
   },
   {
-    icon: '🤖',
-    title: 'AI Analyzes',
-    desc: 'Our ML model processes 12+ features to understand behavioral patterns.',
+    image: '/assets/step-ai-brain.png',
+    title: 'AI Analysis',
+    desc: 'Our trained machine learning model analyzes your inputs against behavioral patterns in real time.',
   },
   {
-    icon: '📊',
-    title: 'Get Your Score',
-    desc: 'Receive a personalized mental health score from 0 to 10 in seconds.',
+    image: '/assets/step-dashboard.png',
+    title: 'Mental Health Score',
+    desc: 'Receive an instant, objective mental health score on a 0 to 10 scale along with a risk interpretation.',
   },
   {
-    icon: '💡',
-    title: 'Actionable Insights',
-    desc: 'Get tailored recommendations to improve your mental wellness.',
+    image: '/assets/step-recommendations.png',
+    title: 'Personalized Recommendations',
+    desc: 'Get tailored, actionable advice to optimize your digital lifestyle, sleep, and overall wellness.',
   },
 ];
 
@@ -32,7 +32,7 @@ export default function HowItWorks() {
       ([entry]) => {
         if (entry.isIntersecting) setVisible(true);
       },
-      { threshold: 0.2 }
+      { threshold: 0.1 }
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -42,29 +42,45 @@ export default function HowItWorks() {
     <section className="how-it-works" id="how-it-works" ref={ref}>
       <div className="container">
         <div className="section-header">
-          <div className="section-tag">⚡ Process</div>
-          <h2 className="section-title">How It Works</h2>
+          <div className="section-tag">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+            Simple Process
+          </div>
+          <h2 className="section-title">How MindAI Works</h2>
           <p className="section-subtitle">
-            Four simple steps to understand your mental wellness using cutting-edge AI technology.
+            Four seamless steps from inputting your daily habits to receiving intelligent healthcare recommendations.
           </p>
         </div>
 
-        <div className="timeline">
+        <div className="hiw-cards-grid">
           {STEPS.map((step, i) => (
             <div
-              className="timeline-step"
+              className="hiw-card"
               key={i}
               style={{
                 animation: visible
-                  ? `fadeInUp 0.6s ease ${i * 0.15}s forwards`
+                  ? `fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${i * 0.12}s forwards`
                   : 'none',
                 opacity: visible ? undefined : 0,
               }}
             >
-              <div className="timeline-step-number">{String(i + 1).padStart(2, '0')}</div>
-              <span className="timeline-step-icon">{step.icon}</span>
-              <h4 className="timeline-step-title">{step.title}</h4>
-              <p className="timeline-step-desc">{step.desc}</p>
+              <div className="hiw-card-badge">
+                0{i + 1}
+              </div>
+
+              <div className="hiw-card-image-wrap">
+                <img
+                  className="hiw-card-image"
+                  src={step.image}
+                  alt={step.title}
+                  loading="lazy"
+                />
+              </div>
+
+              <h3 className="hiw-card-title">{step.title}</h3>
+              <p className="hiw-card-desc">{step.desc}</p>
             </div>
           ))}
         </div>
