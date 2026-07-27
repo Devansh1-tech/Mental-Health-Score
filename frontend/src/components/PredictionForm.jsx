@@ -279,26 +279,14 @@ export default function PredictionForm({ onResult, onError, loading, setLoading 
             <div className="prediction-form-panel">
               <form onSubmit={handleSubmit} noValidate>
                 <div className="form-grid">
-                  {/* Personal Information */}
-                  <div className="form-section-title">👤 Personal Profile</div>
                   {renderField('age', 'Age', 'number', null, 'e.g. 21')}
                   {renderField('gender', 'Gender', 'text', GENDERS)}
                   {renderField('country', 'Country', 'text', null, 'e.g. United States')}
                   {renderField('academic_level', 'Academic Level', 'text', ACADEMIC_LEVELS)}
-
-                  <div className="form-divider"></div>
-
-                  {/* Digital Habits */}
-                  <div className="form-section-title">📱 Digital Habits</div>
                   {renderField('most_used_platform', 'Primary Social Platform', 'text', PLATFORMS)}
                   {renderField('purpose_of_use', 'Primary Purpose', 'text', PURPOSES)}
                   {renderField('avg_daily_usage_hours', 'Daily Usage (Hours)', 'number', null, 'e.g. 4')}
                   {renderField('daily_unlocks', 'Daily Unlocks', 'number', null, 'e.g. 50')}
-
-                  <div className="form-divider"></div>
-
-                  {/* Lifestyle */}
-                  <div className="form-section-title">🏃 Lifestyle & Wellbeing</div>
                   {renderField('study_hours', 'Study Hours / Day', 'number', null, 'e.g. 5')}
                   {renderField('physical_activity_hours', 'Physical Activity (Hours)', 'number', null, 'e.g. 1.5')}
                   {renderField('sleep_hours_per_night', 'Sleep Hours / Night', 'number', null, 'e.g. 7')}
