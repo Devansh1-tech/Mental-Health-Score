@@ -32,7 +32,9 @@ const TESTIMONIALS = [
 
 export default function TestimonialSection() {
   const [visible, setVisible] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
   const ref = useRef(null);
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -44,6 +46,13 @@ export default function TestimonialSection() {
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const { scrollLeft, clientWidth } = scrollRef.current;
+    const index = Math.round(scrollLeft / clientWidth);
+    setActiveIndex(index);
+  };
 
   return (
     <section className="testimonial-section" id="testimonials" ref={ref}>
@@ -61,7 +70,12 @@ export default function TestimonialSection() {
           </p>
         </div>
 
-        <div className="testimonial-grid">
+        {/* Swipeable Testimonials Carousel */}
+        <div
+          className="testimonial-grid mobile-carousel"
+          ref={scrollRef}
+          onScroll={handleScroll}
+        >
           {TESTIMONIALS.map((t, i) => (
             <div
               className="t-card"
@@ -85,6 +99,16 @@ export default function TestimonialSection() {
                 </div>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Mobile Swipe Pagination Dots */}
+        <div className="carousel-dots">
+          {TESTIMONIALS.map((_, idx) => (
+            <span
+              key={idx}
+              className={`carousel-dot ${activeIndex === idx ? 'active' : ''}`}
+            ></span>
           ))}
         </div>
       </div>

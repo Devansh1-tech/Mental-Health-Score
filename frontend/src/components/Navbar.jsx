@@ -11,10 +11,13 @@ export default function Navbar() {
       const currentScroll = window.scrollY;
       setScrolled(currentScroll > 40);
 
-      if (currentScroll > lastScroll.current && currentScroll > 100) {
-        setHidden(true);
-      } else {
-        setHidden(false);
+      // Only hide navbar if mobile menu is NOT open
+      if (!mobileOpen) {
+        if (currentScroll > lastScroll.current && currentScroll > 100) {
+          setHidden(true);
+        } else {
+          setHidden(false);
+        }
       }
 
       lastScroll.current = currentScroll;
@@ -22,7 +25,19 @@ export default function Navbar() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [mobileOpen]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileOpen]);
 
   const handleLinkClick = () => {
     setMobileOpen(false);
@@ -50,16 +65,17 @@ export default function Navbar() {
           <span className="navbar-logo-text">MindAI</span>
         </a>
 
+        {/* Full-Screen Glass Overlay Menu on Mobile */}
         <ul className={`navbar-links ${mobileOpen ? 'open' : ''}`}>
           <li><a href="#hero" onClick={handleLinkClick}>Home</a></li>
-          <li><a href="#how-it-works" onClick={handleLinkClick}>How It Works</a></li>
+          <li><a href="#pipeline" onClick={handleLinkClick}>How It Works</a></li>
+          <li><a href="#ai-engine" onClick={handleLinkClick}>AI Engine</a></li>
+          <li><a href="#bento" onClick={handleLinkClick}>Why MindAI</a></li>
           <li><a href="#prediction" onClick={handleLinkClick}>Predict</a></li>
-          <li><a href="#about" onClick={handleLinkClick}>About</a></li>
           <li><a href="#faq" onClick={handleLinkClick}>FAQ</a></li>
-          <li><a href="#footer" onClick={handleLinkClick}>Contact</a></li>
           <li>
             <a href="#prediction" className="navbar-cta" onClick={handleLinkClick}>
-              Start Prediction
+              Start Assessment
             </a>
           </li>
         </ul>
