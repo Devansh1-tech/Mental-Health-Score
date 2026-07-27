@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-// Animated Score Counter
 function AnimatedScore({ value, duration = 1500 }) {
   const [display, setDisplay] = useState(0);
 
@@ -19,22 +18,20 @@ function AnimatedScore({ value, duration = 1500 }) {
     requestAnimationFrame(step);
   }, [value, duration]);
 
-  return <>{display.toFixed(2)}</>;
+  return <>{display.toFixed(1)}</>;
 }
 
-// SVG Radar Chart Component (5 Dimensions: Sleep, Stress, Digital Habits, Physical Activity, Lifestyle Balance)
 function RadarChart({ dimensions }) {
   const [scale, setScale] = useState(0);
   const cx = 150;
-  const cy = 130;
-  const maxR = 90;
+  const cy = 125;
+  const maxR = 85;
 
   useEffect(() => {
     const timer = setTimeout(() => setScale(1), 200);
     return () => clearTimeout(timer);
   }, []);
 
-  // 5 axes starting at top (-90deg)
   const angles = [-90, -18, 54, 126, 198];
 
   const getCoordinates = (angleDeg, radius) => {
@@ -45,7 +42,7 @@ function RadarChart({ dimensions }) {
     };
   };
 
-  const gridRings = [0.2, 0.4, 0.6, 0.8, 1.0].map((pct) => {
+  const gridRings = [0.25, 0.5, 0.75, 1.0].map((pct) => {
     return angles
       .map((angle) => {
         const pt = getCoordinates(angle, maxR * pct);
@@ -64,29 +61,27 @@ function RadarChart({ dimensions }) {
 
   return (
     <div className="radar-svg-wrap">
-      <svg width="340" height="260" viewBox="0 0 300 260">
+      <svg width="300" height="250" viewBox="0 0 300 250">
         <defs>
           <linearGradient id="radarPolyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10B981" stopOpacity="0.45" />
-            <stop offset="100%" stopColor="#34D399" stopOpacity="0.2" />
+            <stop offset="0%" stopColor="#10B981" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#34D399" stopOpacity="0.15" />
           </linearGradient>
         </defs>
 
-        {/* Grid Rings */}
         {gridRings.map((pts, idx) => (
           <polygon
             key={idx}
             points={pts}
             fill="none"
-            stroke="rgba(16, 185, 129, 0.12)"
-            strokeWidth="1"
+            stroke="rgba(16, 185, 129, 0.14)"
+            strokeWidth="1.2"
           />
         ))}
 
-        {/* Axis Lines & Labels */}
         {angles.map((angle, i) => {
           const outerPt = getCoordinates(angle, maxR);
-          const labelPt = getCoordinates(angle, maxR + 22);
+          const labelPt = getCoordinates(angle, maxR + 20);
           return (
             <g key={i}>
               <line
@@ -94,7 +89,7 @@ function RadarChart({ dimensions }) {
                 y1={cy}
                 x2={outerPt.x}
                 y2={outerPt.y}
-                stroke="rgba(16, 185, 129, 0.15)"
+                stroke="rgba(16, 185, 129, 0.18)"
                 strokeWidth="1"
               />
               <text
@@ -113,7 +108,6 @@ function RadarChart({ dimensions }) {
           );
         })}
 
-        {/* Dynamic Radar Polygon */}
         <polygon
           points={polygonPoints}
           fill="url(#radarPolyGrad)"
@@ -123,7 +117,6 @@ function RadarChart({ dimensions }) {
           style={{ transition: 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)' }}
         />
 
-        {/* Vertex Nodes */}
         {dimensions.map((d, i) => {
           const r = maxR * Math.min(Math.max(d.val, 0.1), 1.0) * scale;
           const pt = getCoordinates(angles[i], r);
@@ -148,93 +141,120 @@ function RadarChart({ dimensions }) {
 function getDashboardData(score) {
   if (score >= 8) {
     return {
-      label: 'Optimal Wellness',
-      risk: 'Low Risk',
+      label: 'Optimal Balance',
       confidence: '98.4%',
       barPct: (score / 10) * 100,
-      insight: 'Your current lifestyle indicates optimal behavioral patterns. High sleep consistency and active movement are sustaining your peak wellness score.',
-      metrics: [
-        { label: 'Sleep Quality', val: 92 },
-        { label: 'Physical Activity', val: 88 },
-        { label: 'Stress Management', val: 85 },
-        { label: 'Digital Wellness', val: 84 },
-        { label: 'Lifestyle Balance', val: 91 },
-      ],
       radarDimensions: [
         { label: 'Sleep', val: 0.92 },
-        { label: 'Digital Habits', val: 0.84 },
+        { label: 'Digital', val: 0.84 },
         { label: 'Activity', val: 0.88 },
         { label: 'Balance', val: 0.91 },
         { label: 'Stress', val: 0.85 },
       ],
+      breakdown: [
+        { label: 'Sleep Quality', val: 92, icon: '😴' },
+        { label: 'Physical Activity', val: 88, icon: '🏃' },
+        { label: 'Stress Management', val: 85, icon: '🧘' },
+        { label: 'Digital Wellness', val: 84, icon: '📱' },
+        { label: 'Lifestyle Balance', val: 91, icon: '⚖️' },
+      ],
+      positives: [
+        { icon: '🌙', text: '7.5+ hours restorative sleep per night' },
+        { icon: '🏃', text: 'Regular physical activity & daily walks' },
+        { icon: '📚', text: 'Consistent daily study hours & deep focus' },
+      ],
+      improvements: [
+        { icon: '📱', text: 'Minor screen time reduction before bedtime' },
+      ],
+      insights: 'Optimal circadian rhythm and active physical recovery are driving high cognitive balance.',
     };
   }
   if (score >= 6) {
     return {
       label: 'Good Balance',
-      risk: 'Low Risk',
       confidence: '94.8%',
       barPct: (score / 10) * 100,
-      insight: 'Your current lifestyle indicates generally healthy behavioral patterns. Improving sleep consistency and reducing prolonged screen exposure could further increase your wellness score.',
-      metrics: [
-        { label: 'Sleep Quality', val: 82 },
-        { label: 'Physical Activity', val: 76 },
-        { label: 'Stress Management', val: 61 },
-        { label: 'Digital Wellness', val: 55 },
-        { label: 'Lifestyle Balance', val: 79 },
-      ],
       radarDimensions: [
         { label: 'Sleep', val: 0.82 },
-        { label: 'Digital Habits', val: 0.55 },
+        { label: 'Digital', val: 0.55 },
         { label: 'Activity', val: 0.76 },
         { label: 'Balance', val: 0.79 },
         { label: 'Stress', val: 0.61 },
       ],
+      breakdown: [
+        { label: 'Sleep Quality', val: 82, icon: '😴' },
+        { label: 'Physical Activity', val: 76, icon: '🏃' },
+        { label: 'Stress Management', val: 61, icon: '🧘' },
+        { label: 'Digital Wellness', val: 55, icon: '📱' },
+        { label: 'Lifestyle Balance', val: 79, icon: '⚖️' },
+      ],
+      positives: [
+        { icon: '🏃', text: 'Sufficient daily physical activity' },
+        { icon: '📚', text: 'Solid academic study routine' },
+      ],
+      improvements: [
+        { icon: '📱', text: 'High screen usage & social media time' },
+        { icon: '🔓', text: 'Frequent phone unlocks (40+ per day)' },
+      ],
+      insights: 'Reducing evening notification switches will boost your overall balance score significantly.',
     };
   }
   if (score >= 4) {
     return {
-      label: 'Moderate Balance',
-      risk: 'Moderate Risk',
+      label: 'Moderate Risk',
       confidence: '94.2%',
       barPct: (score / 10) * 100,
-      insight: 'Your profile reflects moderate behavioral risks. Elevating daily physical movement and establishing strict bedtime screen cutoffs will strengthen your score.',
-      metrics: [
-        { label: 'Sleep Quality', val: 62 },
-        { label: 'Physical Activity', val: 58 },
-        { label: 'Stress Management', val: 48 },
-        { label: 'Digital Wellness', val: 42 },
-        { label: 'Lifestyle Balance', val: 56 },
-      ],
       radarDimensions: [
         { label: 'Sleep', val: 0.62 },
-        { label: 'Digital Habits', val: 0.42 },
+        { label: 'Digital', val: 0.42 },
         { label: 'Activity', val: 0.58 },
         { label: 'Balance', val: 0.56 },
         { label: 'Stress', val: 0.48 },
       ],
+      breakdown: [
+        { label: 'Sleep Quality', val: 62, icon: '😴' },
+        { label: 'Physical Activity', val: 58, icon: '🏃' },
+        { label: 'Stress Management', val: 48, icon: '🧘' },
+        { label: 'Digital Wellness', val: 42, icon: '📱' },
+        { label: 'Lifestyle Balance', val: 56, icon: '⚖️' },
+      ],
+      positives: [
+        { icon: '📚', text: 'Regular study schedule maintained' },
+      ],
+      improvements: [
+        { icon: '😴', text: 'Sub-optimal sleep duration (<6 hours)' },
+        { icon: '🧘', text: 'Elevated self-reported stress levels' },
+      ],
+      insights: 'Prioritize restorative sleep and set strict digital boundaries after 10 PM.',
     };
   }
   return {
     label: 'Elevated Risk',
-    risk: 'High Risk',
     confidence: '96.5%',
     barPct: (score / 10) * 100,
-    insight: 'Your daily habits reflect elevated stress and sleep debt. We recommend setting immediate digital boundaries and prioritizing daily restorative recovery.',
-    metrics: [
-      { label: 'Sleep Quality', val: 45 },
-      { label: 'Physical Activity', val: 38 },
-      { label: 'Stress Management', val: 32 },
-      { label: 'Digital Wellness', val: 28 },
-      { label: 'Lifestyle Balance', val: 40 },
-    ],
     radarDimensions: [
       { label: 'Sleep', val: 0.45 },
-      { label: 'Digital Habits', val: 0.28 },
+      { label: 'Digital', val: 0.28 },
       { label: 'Activity', val: 0.38 },
       { label: 'Balance', val: 0.40 },
       { label: 'Stress', val: 0.32 },
     ],
+    breakdown: [
+      { label: 'Sleep Quality', val: 45, icon: '😴' },
+      { label: 'Physical Activity', val: 38, icon: '🏃' },
+      { label: 'Stress Management', val: 32, icon: '🧘' },
+      { label: 'Digital Wellness', val: 28, icon: '📱' },
+      { label: 'Lifestyle Balance', val: 40, icon: '⚖️' },
+    ],
+    positives: [
+      { icon: '📋', text: 'Completed behavioral assessment' },
+    ],
+    improvements: [
+      { icon: '😴', text: 'Severe sleep debt accumulated' },
+      { icon: '📱', text: 'Excessive daily screen exposure' },
+      { icon: '🏃', text: 'Low physical activity levels' },
+    ],
+    insights: 'Immediate focus on sleep restoration and digital boundary setting recommended.',
   };
 }
 
@@ -250,166 +270,198 @@ export default function WellnessDashboardResult({ score, onReset }) {
   return (
     <section className="wellness-dashboard-section" id="result">
       <div className="container">
-        <div className="wellness-dashboard-card">
-          {/* Header */}
-          <div className="dashboard-header">
-            <div className="dashboard-brand">
-              <div className="dashboard-brand-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4Z" />
-                  <path d="M16 8v2a4 4 0 0 0 4 4" />
-                  <path d="M8 8v2a4 4 0 0 1-4 4" />
-                  <path d="M12 12v10" />
-                </svg>
-              </div>
-              <div>
-                <div className="dashboard-brand-title">AI Healthcare Analytics Dashboard</div>
-                <div className="dashboard-brand-sub">Clinical Metric Evaluation Engine • MindAI OS</div>
+        <div className="dashboard-wrapper">
+
+          {/* TOP SECTION: Score Card */}
+          <div className="dash-top-card glass-card">
+            <div className="dash-top-header">
+              <div className="dash-score-flex">
+                <div className="dash-score-main">
+                  <span className="dash-score-num">
+                    <AnimatedScore value={score} />
+                  </span>
+                  <span className="dash-score-max">/10.0</span>
+                </div>
+                <div className="dash-badges-wrap">
+                  <span className="dash-status-pill">✨ {data.label}</span>
+                  <span className="dash-conf-pill">🎯 {data.confidence} Confidence</span>
+                </div>
               </div>
             </div>
-            <div className="dashboard-confidence">
-              🎯 Model Confidence: {data.confidence}
+
+            {/* Horizontal Progress Bar */}
+            <div className="dash-score-bar-wrap">
+              <div className="dash-score-bar-track">
+                <div
+                  className="dash-score-bar-fill"
+                  style={{ width: `${barWidth}%` }}
+                ></div>
+              </div>
+              <div className="dash-score-bar-labels">
+                <span>0.0 (Elevated Risk)</span>
+                <span>5.0 (Moderate)</span>
+                <span className="gold-label">10.0 (Optimal)</span>
+              </div>
             </div>
           </div>
 
-          {/* TWO-COLUMN LAYOUT */}
-          <div className="dashboard-two-col">
-            {/* LEFT COLUMN: Apple Health AI Wellness Summary (NO CIRCLES!) */}
-            <div className="dashboard-left-col">
-              <div className="score-summary-card">
-                <div style={{ fontSize: '0.78rem', color: '#94A3B8', fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '12px' }}>
-                  Mental Wellness Score
+          {/* MIDDLE SECTION: 2-Column Grid */}
+          <div className="dash-mid-grid">
+
+            {/* LEFT COLUMN: Radar Chart + Behavior Breakdown */}
+            <div className="dash-col-left">
+              {/* Radar Chart Glass Card */}
+              <div className="dash-card glass-card">
+                <div className="dash-card-title">
+                  <span>📊</span> Behavior Radar Chart
                 </div>
+                <RadarChart dimensions={data.radarDimensions} />
+              </div>
 
-                <div className="score-header-flex">
-                  <div>
-                    <span className="score-large-num">
-                      <AnimatedScore value={score} />
-                    </span>
-                    <span className="score-denom">/10.0</span>
-                  </div>
+              {/* Behavior Breakdown Glass Card */}
+              <div className="dash-card glass-card">
+                <div className="dash-card-title">
+                  <span>⚖️</span> Behavioral Signals Breakdown
                 </div>
-
-                <div className="score-badge-row">
-                  <span className="status-badge-emerald">✨ {data.label}</span>
-                  <span className="risk-level-tag">🛡️ {data.risk}</span>
-                </div>
-
-                {/* Horizontal Progress Indicator (Emerald -> Mint) */}
-                <div className="horiz-score-track">
-                  <div
-                    className="horiz-score-fill"
-                    style={{ width: `${barWidth}%` }}
-                  ></div>
-                </div>
-
-                {/* AI Key Insight Card */}
-                <div className="ai-summary-insight-card">
-                  <div className="insight-card-icon">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                  </div>
-                  <div className="insight-card-text">{data.insight}</div>
-                </div>
-
-                {/* Behavioral Breakdown */}
-                <div className="behavioral-breakdown-box">
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>
-                    Behavioral Breakdown
-                  </div>
-
-                  {data.metrics.map((m, idx) => (
-                    <div className="breakdown-row" key={idx}>
-                      <div className="breakdown-label-flex">
-                        <span>{m.label}</span>
-                        <span>{m.val}%</span>
+                <div className="dash-metrics-list">
+                  {data.breakdown.map((m, idx) => (
+                    <div className="dash-metric-row" key={idx}>
+                      <div className="dash-metric-info">
+                        <span>{m.icon} {m.label}</span>
+                        <span className="dash-metric-val">{m.val}%</span>
                       </div>
-                      <div className="breakdown-bar-track-sm">
+                      <div className="dash-metric-track">
                         <div
-                          className="breakdown-bar-fill-sm"
+                          className="dash-metric-fill"
                           style={{ width: `${barWidth > 0 ? m.val : 0}%` }}
                         ></div>
                       </div>
                     </div>
                   ))}
                 </div>
-
-                {/* Metadata Footer */}
-                <div className="dashboard-meta-footer">
-                  <div>Generated: <strong>Today</strong></div>
-                  <div>Model: <strong>Ensemble ML</strong></div>
-                  <div>Latency: <strong>42 ms</strong></div>
-                </div>
               </div>
             </div>
 
-            {/* RIGHT COLUMN: SVG Radar Chart + Insights + Model Confidence Card */}
-            <div className="dashboard-right-col">
-              {/* TOP: SVG Radar Chart */}
-              <div className="radar-chart-card">
-                <div className="radar-chart-title">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                  </svg>
-                  AI Wellness Radar Chart
-                </div>
-                <RadarChart dimensions={data.radarDimensions} />
-              </div>
+            {/* RIGHT COLUMN: Habits + Needs Improvement + AI Insights */}
+            <div className="dash-col-right">
 
-              {/* MIDDLE: AI Key Insights Card */}
-              <div className="insights-card">
-                <div className="insights-title">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="16" x2="12" y2="12" />
-                    <line x1="12" y1="8" x2="12.01" y2="8" />
-                  </svg>
-                  AI Key Insights
+              {/* Top Positive Habits */}
+              <div className="dash-card glass-card">
+                <div className="dash-card-title">
+                  <span>🌟</span> Top Positive Habits
                 </div>
-                <div className="insights-list">
-                  <div className="insight-item">
-                    <span className="insight-bullet">•</span>
-                    <span>Sleep quality is affecting your wellness score.</span>
-                  </div>
-                  <div className="insight-item">
-                    <span className="insight-bullet">•</span>
-                    <span>Daily digital usage is above the healthy range.</span>
-                  </div>
-                  <div className="insight-item">
-                    <span className="insight-bullet">•</span>
-                    <span>Physical activity is improving overall wellness.</span>
-                  </div>
+                <div className="dash-cards-stack">
+                  {data.positives.map((p, idx) => (
+                    <div className="habit-mini-card positive" key={idx}>
+                      <span className="habit-icon">{p.icon}</span>
+                      <span className="habit-text">{p.text}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
 
-              {/* BOTTOM: Model Confidence Card */}
-              <div className="confidence-card">
-                <div className="confidence-val-box">
-                  <div className="confidence-num">{data.confidence}</div>
-                  <div className="confidence-label">Confidence</div>
+              {/* Needs Improvement */}
+              <div className="dash-card glass-card">
+                <div className="dash-card-title">
+                  <span>⚡</span> Needs Improvement
                 </div>
-                <div className="confidence-explain">
-                  "The prediction is based on the available behavioral inputs and should be considered an informational estimate."
+                <div className="dash-cards-stack">
+                  {data.improvements.map((imp, idx) => (
+                    <div className="habit-mini-card warning" key={idx}>
+                      <span className="habit-icon">{imp.icon}</span>
+                      <span className="habit-text">{imp.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Key Insights */}
+              <div className="dash-card glass-card insight-glass-card">
+                <div className="dash-card-title">
+                  <span>💡</span> AI Key Insights
+                </div>
+                <p className="dash-insight-p">
+                  "{data.insights}"
+                </p>
+              </div>
+
+            </div>
+          </div>
+
+          {/* BOTTOM SECTION: Daily Wellness Plan */}
+          <div className="dash-bottom-card glass-card">
+            <div className="dash-card-title" style={{ marginBottom: '20px' }}>
+              <span>🗓️</span> Daily Wellness Action Plan
+            </div>
+
+            <div className="daily-timeline-grid">
+              <div className="timeline-slot">
+                <div className="slot-header">
+                  <span className="slot-icon">🌅</span>
+                  <div>
+                    <div className="slot-name">Morning</div>
+                    <div className="slot-time">7:00 AM - 9:00 AM</div>
+                  </div>
+                </div>
+                <div className="slot-body">
+                  10-minute natural sunlight exposure & 500ml morning hydration.
+                </div>
+              </div>
+
+              <div className="timeline-slot">
+                <div className="slot-header">
+                  <span className="slot-icon">☀️</span>
+                  <div>
+                    <div className="slot-name">Afternoon</div>
+                    <div className="slot-time">12:00 PM - 2:00 PM</div>
+                  </div>
+                </div>
+                <div className="slot-body">
+                  20-minute brisk walk & 5-minute desk mobility stretching.
+                </div>
+              </div>
+
+              <div className="timeline-slot">
+                <div className="slot-header">
+                  <span className="slot-icon">🌆</span>
+                  <div>
+                    <div className="slot-name">Evening</div>
+                    <div className="slot-time">6:00 PM - 8:00 PM</div>
+                  </div>
+                </div>
+                <div className="slot-body">
+                  Enable phone Grayscale mode & eat a balanced glycemic dinner.
+                </div>
+              </div>
+
+              <div className="timeline-slot">
+                <div className="slot-header">
+                  <span className="slot-icon">🌙</span>
+                  <div>
+                    <div className="slot-name">Night</div>
+                    <div className="slot-time">10:00 PM - 11:00 PM</div>
+                  </div>
+                </div>
+                <div className="slot-body">
+                  4-7-8 box breathing & cool dark bedroom setting for sleep.
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="result-actions" style={{ marginTop: '40px' }}>
-            <button className="result-btn-outline" onClick={onReset}>
-              🔄 Recalculate Score
+          {/* Reset Actions */}
+          <div className="dash-actions">
+            <button className="btn-secondary" onClick={onReset}>
+              🔄 Recalculate Assessment
             </button>
             <button
-              className="result-btn-primary"
+              className="btn-primary"
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               ↑ Back to Top
             </button>
           </div>
+
         </div>
       </div>
     </section>
